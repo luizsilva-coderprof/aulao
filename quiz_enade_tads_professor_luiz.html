@@ -1,0 +1,2664 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz ENADE TADS — Preparatório Professor Luiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       VARIÁVEIS DE TEMA E TOKENS DE DESIGN
+       ========================================================================== */
+    :root {
+      --bg-app: #0b1120;
+      --bg-surface: #131c31;
+      --bg-surface-2: #1b2640;
+      --bg-hover: #233152;
+      --border: #283655;
+      --border-light: #354770;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-soft: rgba(99, 102, 241, 0.16);
+
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --success-border: rgba(16, 185, 129, 0.45);
+
+      --danger: #f43f5e;
+      --danger-bg: rgba(244, 63, 94, 0.15);
+      --danger-border: rgba(244, 63, 94, 0.45);
+
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.15);
+
+      --shadow-lg: 0 20px 40px -15px rgba(0, 0, 0, 0.55);
+      --shadow-md: 0 8px 20px -6px rgba(0, 0, 0, 0.35);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    body.light-theme {
+      --bg-app: #f1f5f9;
+      --bg-surface: #ffffff;
+      --bg-surface-2: #f8fafc;
+      --bg-hover: #eef2ff;
+      --border: #e2e8f0;
+      --border-light: #cbd5e1;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+
+      --accent: #4f46e5;
+      --accent-hover: #4338ca;
+      --accent-soft: rgba(79, 70, 229, 0.1);
+
+      --success: #059669;
+      --success-bg: rgba(16, 185, 129, 0.12);
+      --success-border: rgba(16, 185, 129, 0.45);
+
+      --danger: #e11d48;
+      --danger-bg: rgba(244, 63, 94, 0.1);
+      --danger-border: rgba(244, 63, 94, 0.45);
+
+      --shadow-lg: 0 20px 35px -15px rgba(15, 23, 42, 0.12);
+      --shadow-md: 0 6px 16px -4px rgba(15, 23, 42, 0.08);
+    }
+
+    /* ==========================================================================
+       RESET & BASE
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-app);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: inherit;
+      transition: var(--transition);
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* ==========================================================================
+       HEADER / BARRA SUPERIOR
+       ========================================================================== */
+    .topbar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.9rem 1.25rem;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, var(--accent), #818cf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-sub {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .btn-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 0.95rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+
+    .btn-pill:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .badge-count {
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.74rem;
+      padding: 0.1rem 0.48rem;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    /* ==========================================================================
+       CONTAINER PRINCIPAL
+       ========================================================================== */
+    .container {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 3rem;
+      flex: 1;
+    }
+
+    .screen {
+      display: none;
+      animation: fadeSlideIn 0.3s ease forwards;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ==========================================================================
+       CARDS E BOTÕES PADRÃO
+       ========================================================================== */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.65rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.98rem;
+      padding: 0.85rem 1.5rem;
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.45);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -4px rgba(99, 102, 241, 0.55);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 0.92rem;
+      padding: 0.8rem 1.25rem;
+      border-radius: var(--radius-md);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      border-color: var(--border-light);
+      background: var(--bg-hover);
+    }
+
+    .btn-danger-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--danger);
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .btn-danger-ghost:hover:not(:disabled) {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    /* ==========================================================================
+       TELA INICIAL (HOME)
+       ========================================================================== */
+    .hero-header {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto 1.75rem;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--accent-soft);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 0.32rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.85rem;
+    }
+
+    body.light-theme .hero-pill {
+      color: var(--accent);
+    }
+
+    .hero-title {
+      font-size: clamp(1.6rem, 3.5vw, 2.25rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+      margin-bottom: 0.65rem;
+    }
+
+    .hero-desc {
+      color: var(--text-secondary);
+      font-size: 0.98rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 0.9rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .stat-box {
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .stat-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .config-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.15rem;
+      margin-bottom: 1.75rem;
+    }
+
+    @media (max-width: 720px) {
+      .config-section {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .config-box {
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.15rem;
+    }
+
+    .config-box h3 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .theme-chips {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .chip-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      font-size: 0.86rem;
+      font-weight: 500;
+      text-align: left;
+    }
+
+    .chip-option.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .chip-count {
+      font-size: 0.76rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      background: var(--bg-surface-2);
+      color: var(--text-secondary);
+      font-weight: 700;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--border);
+      gap: 0.75rem;
+    }
+
+    .toggle-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .toggle-info strong {
+      display: block;
+      font-size: 0.88rem;
+    }
+
+    .toggle-info span {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    /* Switch estilizado */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: var(--border-light);
+      transition: 0.25s;
+      border-radius: 999px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.25s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--accent);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    .home-cta {
+      display: flex;
+      gap: 0.85rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .home-cta .btn-primary {
+      min-width: 230px;
+      font-size: 1.05rem;
+      padding: 0.95rem 1.8rem;
+    }
+
+    /* ==========================================================================
+       TELA DO JOGO (QUIZ)
+       ========================================================================== */
+    .quiz-hud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .hud-group {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .hud-badge {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 0.42rem 0.8rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .hud-streak {
+      background: var(--warning-bg);
+      border-color: rgba(245, 158, 11, 0.4);
+      color: var(--warning);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-surface-2);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 1.35rem;
+      border: 1px solid var(--border);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #34d399);
+      width: 0%;
+      transition: width 0.35s ease;
+    }
+
+    .question-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .meta-tags {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tag-year {
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+    }
+
+    .tag-topic {
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+    }
+
+    .question-stem {
+      font-size: 1.02rem;
+      color: var(--text-primary);
+      margin-bottom: 1.15rem;
+      white-space: pre-line;
+    }
+
+    .question-source {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: 0.45rem;
+    }
+
+    .figure-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin: 1rem 0 1.25rem;
+      text-align: center;
+      overflow-x: auto;
+    }
+
+    .figure-caption {
+      font-size: 0.78rem;
+      color: #475569;
+      font-style: italic;
+      margin-top: 0.5rem;
+    }
+
+    .statements-list {
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .statement-item {
+      font-size: 0.94rem;
+      line-height: 1.55;
+      padding-left: 0.25rem;
+    }
+
+    .statement-roman {
+      font-weight: 800;
+      color: #818cf8;
+      margin-right: 0.35rem;
+    }
+
+    body.light-theme .statement-roman {
+      color: var(--accent);
+    }
+
+    .assertion-connector {
+      text-align: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      color: var(--warning);
+      padding: 0.25rem 0;
+    }
+
+    .question-prompt {
+      font-weight: 700;
+      font-size: 0.98rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    /* Alternativas */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .option-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+      width: 100%;
+      text-align: left;
+      padding: 0.95rem 1.1rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface-2);
+      border: 2px solid var(--border);
+      font-size: 0.95rem;
+      line-height: 1.48;
+      position: relative;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: var(--bg-hover);
+      transform: translateX(3px);
+    }
+
+    .option-letter {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .option-btn.correct {
+      background: var(--success-bg);
+      border-color: var(--success);
+      color: var(--text-primary);
+    }
+
+    .option-btn.correct .option-letter {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+
+    .option-btn.wrong {
+      background: var(--danger-bg);
+      border-color: var(--danger);
+      color: var(--text-primary);
+    }
+
+    .option-btn.wrong .option-letter {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #fff;
+    }
+
+    .option-btn.dimmed {
+      opacity: 0.55;
+    }
+
+    /* Card de Feedback Comentado */
+    .feedback-box {
+      margin-top: 1.4rem;
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.35rem;
+      border: 1px solid var(--border);
+      animation: fadeSlideIn 0.25s ease;
+    }
+
+    .feedback-box.is-correct {
+      background: var(--success-bg);
+      border-color: var(--success-border);
+    }
+
+    .feedback-box.is-wrong {
+      background: var(--danger-bg);
+      border-color: var(--danger-border);
+    }
+
+    .feedback-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .feedback-status {
+      font-weight: 800;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .feedback-box.is-correct .feedback-status {
+      color: var(--success);
+    }
+
+    .feedback-box.is-wrong .feedback-status {
+      color: var(--danger);
+    }
+
+    .feedback-gabarito {
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+    }
+
+    .feedback-justification {
+      font-size: 0.93rem;
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .feedback-justification strong {
+      color: var(--text-primary);
+    }
+
+    .quiz-footer {
+      margin-top: 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    /* ==========================================================================
+       TELA DE RESULTADOS
+       ========================================================================== */
+    .result-hero {
+      text-align: center;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+
+    .score-ring {
+      width: 118px;
+      height: 118px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      border: 4px solid var(--accent);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+
+    .score-ring strong {
+      font-size: 1.85rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .score-ring span {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .topic-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-bottom: 1.65rem;
+    }
+
+    .topic-bar-card {
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.95rem 1.1rem;
+    }
+
+    .topic-bar-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 0.45rem;
+    }
+
+    .topic-bar-track {
+      height: 8px;
+      background: var(--bg-surface);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .topic-bar-fill {
+      height: 100%;
+      background: var(--success);
+      border-radius: 999px;
+    }
+
+    .review-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    .review-item {
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--danger);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.15rem;
+    }
+
+    .review-item-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.45rem;
+      flex-wrap: wrap;
+      font-size: 0.83rem;
+      font-weight: 700;
+    }
+
+    .review-item p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ==========================================================================
+       MODAL GERENCIADOR DE QUESTÕES (ATIVAR / EXCLUIR)
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.78);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+      animation: fadeSlideIn 0.2s ease;
+    }
+
+    .modal-dialog {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 820px;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+      padding: 1.2rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .modal-header h2 {
+      font-size: 1.12rem;
+      font-weight: 800;
+    }
+
+    .modal-toolbar {
+      padding: 0.95rem 1.4rem;
+      background: var(--bg-surface-2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .filter-selects {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    select {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.45rem 0.75rem;
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 500;
+    }
+
+    .bulk-actions {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-mini {
+      padding: 0.4rem 0.72rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+    }
+
+    .btn-mini:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .modal-body {
+      padding: 1rem 1.4rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .q-manage-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border);
+      transition: var(--transition);
+    }
+
+    .q-manage-item.excluded {
+      opacity: 0.52;
+      background: var(--bg-app);
+      border-style: dashed;
+    }
+
+    .q-manage-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .q-manage-badges {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-bottom: 0.3rem;
+      flex-wrap: wrap;
+    }
+
+    .q-manage-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .q-manage-sub {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .btn-toggle-q {
+      padding: 0.48rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      min-width: 105px;
+      text-align: center;
+    }
+
+    .btn-toggle-q.active-state {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid var(--success-border);
+    }
+
+    .btn-toggle-q.active-state:hover {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: var(--danger-border);
+    }
+
+    .btn-toggle-q.excluded-state {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+    }
+
+    .btn-toggle-q.excluded-state:hover {
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: var(--success-border);
+    }
+
+    .modal-footer {
+      padding: 1rem 1.4rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* ==========================================================================
+       TOAST NOTIFICATION
+       ========================================================================== */
+    .toast {
+      position: fixed;
+      bottom: 1.4rem;
+      right: 1.4rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--accent);
+      color: var(--text-primary);
+      padding: 0.8rem 1.15rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      font-size: 0.86rem;
+      font-weight: 600;
+      z-index: 200;
+      transform: translateY(120%);
+      opacity: 0;
+      transition: all 0.28s ease;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       BARRA SUPERIOR
+       ======================================================================== -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand" style="cursor:pointer;" onclick="goHome()">
+        <div class="brand-icon">ET</div>
+        <div>
+          <div class="brand-title">Preparatório ENADE TADS</div>
+          <div class="brand-sub">Caderno Único • Professor Luiz (2014–2021)</div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="btn-pill" id="btnOpenManager" title="Ativar ou excluir questões do jogo">
+          <span>⚙️ Gerenciar Questões</span>
+          <span class="badge-count" id="topbarActiveCount">17/17</span>
+        </button>
+        <button class="btn-pill" id="btnThemeToggle" title="Alternar tema claro/escuro">
+          ☀️
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       ÁREA PRINCIPAL
+       ======================================================================== -->
+  <main class="container">
+
+    <!-- 1. TELA INICIAL -->
+    <section id="screenHome" class="screen active">
+      <div class="card">
+        <div class="hero-header">
+          <div class="hero-pill">📘 Simulado Comentado Oficial</div>
+          <h1 class="hero-title">Engenharia de Software & Qualidade</h1>
+          <p class="hero-desc">
+            Pratique com todas as 17 questões oficiais do ENADE TADS compiladas pelo Professor Luiz,
+            com justificativas técnicas detalhadas e controle total para incluir ou excluir questões.
+          </p>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-label">Questões Ativas</span>
+            <span class="stat-value" id="statActive">17 / 17</span>
+            <span class="stat-hint" id="statExcludedHint">Nenhuma questão excluída</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Melhor Pontuação</span>
+            <span class="stat-value" id="statBestScore">0 pts</span>
+            <span class="stat-hint" id="statBestAccuracy">Recorde pessoal</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Edições Cobertas</span>
+            <span class="stat-value">2014 • 17 • 21</span>
+            <span class="stat-hint">3 eixos temáticos</span>
+          </div>
+        </div>
+
+        <!-- Configurações da Partida -->
+        <div class="config-section">
+          <div class="config-box">
+            <h3>📚 Filtrar por Tema</h3>
+            <div class="theme-chips" id="themeSelector">
+              <button class="chip-option selected" data-theme="ALL">
+                <span>Todos os Temas do Caderno</span>
+                <span class="chip-count" id="countThemeAll">17</span>
+              </button>
+              <button class="chip-option" data-theme="Processos de Software">
+                <span>1.1. Processos de Software</span>
+                <span class="chip-count" id="countThemeProcessos">10</span>
+              </button>
+              <button class="chip-option" data-theme="Qualidade de Software">
+                <span>1.2. Qualidade de Software</span>
+                <span class="chip-count" id="countThemeQualidade">3</span>
+              </button>
+              <button class="chip-option" data-theme="Verificação e Validação de Software">
+                <span>1.3. Verificação e Validação (V&V)</span>
+                <span class="chip-count" id="countThemeVV">4</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="config-box">
+            <h3>🎮 Preferências do Quiz</h3>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <strong>Embaralhar Questões</strong>
+                <span>Ordem aleatória a cada nova partida</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="chkShuffleQuestions" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <strong>Modo Cronômetro</strong>
+                <span>Contabilizar tempo total de resolução</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="chkTimer" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <strong>Banco Personalizado</strong>
+                <span>Exclua questões que já domina</span>
+              </div>
+              <button class="btn-mini" onclick="openManagerModal()">Editar Lista →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-cta">
+          <button class="btn-primary" id="btnStartQuiz">
+            <span>▶ Iniciar Simulado</span>
+          </button>
+          <button class="btn-secondary" onclick="openManagerModal()">
+            <span>🗑️ Selecionar / Excluir Questões</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. TELA DO JOGO -->
+    <section id="screenQuiz" class="screen">
+      <!-- HUD Superior -->
+      <div class="quiz-hud">
+        <div class="hud-group">
+          <span class="hud-badge" id="hudProgress">Questão 1 de 17</span>
+          <span class="hud-badge" id="hudScore">🏆 0 pts</span>
+          <span class="hud-badge hud-streak" id="hudStreak" style="display:none;">🔥 0 seguidas</span>
+          <span class="hud-badge" id="hudTimer">⏱️ 00:00</span>
+        </div>
+        <div class="hud-group">
+          <button class="btn-danger-ghost" id="btnExcludeCurrent" title="Remover esta questão das próximas partidas">
+            🗑️ Excluir esta questão
+          </button>
+          <button class="btn-mini" onclick="goHome()">✕ Sair</button>
+        </div>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-fill" id="progressBar"></div>
+      </div>
+
+      <!-- Card da Questão -->
+      <div class="card">
+        <div class="question-meta">
+          <div class="meta-tags">
+            <span class="tag-year" id="qYearBadge">ENADE 2021 • Q12</span>
+            <span class="tag-topic" id="qTopicBadge">Processos de Software</span>
+          </div>
+          <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;" id="qSubtopic">
+            Métodos Ágeis
+          </span>
+        </div>
+
+        <div class="question-stem" id="qStem"></div>
+        <div class="question-source" id="qSource" style="display:none;"></div>
+
+        <!-- Ilustração SVG quando houver -->
+        <div class="figure-box" id="qFigureContainer" style="display:none;"></div>
+
+        <!-- Afirmações I, II, III... -->
+        <div class="statements-list" id="qStatements" style="display:none;"></div>
+
+        <!-- Comando da questão -->
+        <div class="question-prompt" id="qPrompt"></div>
+
+        <!-- Alternativas A - E -->
+        <div class="options-list" id="qOptions"></div>
+
+        <!-- Gabarito Comentado (aparece após responder) -->
+        <div class="feedback-box" id="feedbackBox" style="display:none;">
+          <div class="feedback-header">
+            <span class="feedback-status" id="feedbackStatus">✅ Resposta Correta!</span>
+            <span class="feedback-gabarito" id="feedbackGabarito">Gabarito Oficial: C</span>
+          </div>
+          <div class="feedback-justification" id="feedbackJustification"></div>
+        </div>
+
+        <div class="quiz-footer">
+          <span style="font-size:0.8rem; color:var(--text-muted);" id="footerTip">
+            Selecione uma alternativa para ver o comentário do gabarito.
+          </span>
+          <button class="btn-primary" id="btnNextQuestion" style="display:none;">
+            Próxima Questão →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. TELA DE RESULTADO FINAL -->
+    <section id="screenResult" class="screen">
+      <div class="card">
+        <div class="result-hero">
+          <div class="score-ring">
+            <strong id="resPercent">0%</strong>
+            <span>Aproveitamento</span>
+          </div>
+          <h2 style="font-size:1.55rem; font-weight:800; margin-bottom:0.35rem;" id="resTitle">
+            Simulado Concluído!
+          </h2>
+          <p style="color:var(--text-secondary); font-size:0.95rem;" id="resSubtitle">
+            Você acertou X de Y questões.
+          </p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-label">Pontuação Final</span>
+            <span class="stat-value" id="resScore">0 pts</span>
+            <span class="stat-hint">Com bônus de sequência</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Acertos / Erros</span>
+            <span class="stat-value" id="resHitsMisses">0 / 0</span>
+            <span class="stat-hint" id="resTime">Tempo: 00:00</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Maior Sequência</span>
+            <span class="stat-value" id="resBestStreak">0</span>
+            <span class="stat-hint">Acertos consecutivos</span>
+          </div>
+        </div>
+
+        <h3 style="font-size:1rem; font-weight:700; margin-bottom:0.75rem;">
+          📊 Desempenho por Eixo Temático
+        </h3>
+        <div class="topic-breakdown" id="resTopicBreakdown"></div>
+
+        <div class="home-cta" style="margin-top:1.5rem;">
+          <button class="btn-primary" id="btnPlayAgain">
+            🔄 Jogar Novamente
+          </button>
+          <button class="btn-secondary" id="btnRetryWrong" style="display:none;">
+            🎯 Refazer Apenas as Erradas (<span id="wrongCountSpan">0</span>)
+          </button>
+          <button class="btn-secondary" onclick="goHome()">
+            🏠 Voltar ao Início
+          </button>
+        </div>
+
+        <!-- Lista de Revisão das Erradas -->
+        <div id="wrongReviewSection" style="margin-top:2rem; display:none;">
+          <h3 style="font-size:1rem; font-weight:700; margin-bottom:0.5rem; color:var(--danger);">
+            📝 Revisão das Questões Erradas
+          </h3>
+          <p style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:0.85rem;">
+            Confira o gabarito oficial e a justificativa técnica de cada questão que você errou:
+          </p>
+          <div class="review-list" id="wrongReviewList"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       MODAL: GERENCIAR / EXCLUIR QUESTÕES
+       ======================================================================== -->
+  <div class="modal-backdrop" id="managerModal">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <div>
+          <h2 id="modalTitle">⚙️ Gerenciar Banco de Questões</h2>
+          <p style="font-size:0.8rem; color:var(--text-secondary);">
+            Ative ou exclua questões específicas. Suas preferências são salvas automaticamente.
+          </p>
+        </div>
+        <button class="btn-mini" onclick="closeManagerModal()" style="font-size:1rem;">✕</button>
+      </div>
+
+      <div class="modal-toolbar">
+        <div class="filter-row">
+          <div class="filter-selects">
+            <select id="filterModalTopic" onchange="renderManagerList()">
+              <option value="ALL">Todos os Temas</option>
+              <option value="Processos de Software">Processos de Software</option>
+              <option value="Qualidade de Software">Qualidade de Software</option>
+              <option value="Verificação e Validação de Software">Verificação e Validação</option>
+            </select>
+            <select id="filterModalYear" onchange="renderManagerList()">
+              <option value="ALL">Todos os Anos</option>
+              <option value="2021">ENADE 2021</option>
+              <option value="2017">ENADE 2017</option>
+              <option value="2014">ENADE 2014</option>
+            </select>
+            <select id="filterModalStatus" onchange="renderManagerList()">
+              <option value="ALL">Todas (Ativas e Excluídas)</option>
+              <option value="ACTIVE">Somente Ativas</option>
+              <option value="EXCLUDED">Somente Excluídas</option>
+            </select>
+          </div>
+
+          <div class="bulk-actions">
+            <button class="btn-mini" onclick="bulkToggleQuestions(true)">✅ Ativar Todas</button>
+            <button class="btn-mini" onclick="bulkToggleQuestions(false)">🚫 Excluir Filtradas</button>
+            <button class="btn-mini" onclick="resetDefaultQuestions()">↺ Restaurar Padrão</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-body" id="managerQuestionList"></div>
+
+      <div class="modal-footer">
+        <span style="font-size:0.85rem; font-weight:700;" id="modalSummaryText">
+          17 de 17 questões ativas no jogo
+        </span>
+        <button class="btn-primary" style="padding:0.65rem 1.35rem;" onclick="closeManagerModal()">
+          Concluir e Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast de Notificação -->
+  <div class="toast" id="toastMsg"></div>
+
+  <script>
+    /* ==========================================================================
+       BANCO DE DADOS COMPLETO DAS 17 QUESTÕES DO CADERNO (PROFESSOR LUIZ)
+       ========================================================================== */
+    const QUESTIONS_DB = [
+      // ---------------------- 1.1. PROCESSOS DE SOFTWARE (10) ----------------------
+      {
+        id: "2021-Q12",
+        year: "2021",
+        number: "Q12",
+        topic: "Processos de Software",
+        subtopic: "Métodos Ágeis (Scrum, XP, Kanban)",
+        stem: "Uma fábrica de software está realizando entrevistas para contração de um profissional que esteja alinhado às exigências do atual mundo corporativo. Sabe-se que processos ágeis de desenvolvimento têm se tornado essenciais para empresas que desejam realizar entregas rápidas e frequentes de produtos e/ou serviços de software. Essa empresa possui uma equipe de desenvolvimento que faz uso de processos ágeis como o Scrum e eXtreme Programming (XP) e o acompanhamento por meio do quadro Kanban. Sendo assim, um conjunto de características deve ser verificado durante a entrevista para garantir que o candidato a ser contratado possua conhecimentos necessários para atuar juntamente a esta equipe.\n\nCom base no texto e nos processos ágeis de desenvolvimento de software, avalie as afirmações a seguir.",
+        statements: [
+          { roman: "I.", text: "Métodos Ágeis são baseados em ciclos iterativo e incremental que se concentram no desenvolvimento rápido e na flexibilidade às mudanças, com a participação do cliente no processo de software." },
+          { roman: "II.", text: "Uma forte característica da XP é a garantia da qualidade do código produzido e, para isso, os desenvolvedores produzem testes automatizados antes mesmo de codificar uma funcionalidade." },
+          { roman: "III.", text: "O planejamento no Scrum é baseado na elaboração dos itens do product backlog, que é uma lista de funcionalidades desejadas pelo cliente, sendo o Scrum Master o responsável por gerenciá-lo." },
+          { roman: "IV.", text: "O quadro Kanban permite monitorar a evolução das tarefas necessárias durante o processo ágil de desenvolvimento de software, possibilitando um acompanhamento de forma visual das atividades em construção." }
+        ],
+        prompt: "É correto apenas o que se afirma em",
+        options: [
+          { letter: "A", text: "II." },
+          { letter: "B", text: "I e III." },
+          { letter: "C", text: "I, II e IV." },
+          { letter: "D", text: "I, III e IV." },
+          { letter: "E", text: "II, III e IV." }
+        ],
+        correct: "C",
+        justification: "As afirmações I, II e IV estão corretas: métodos ágeis operam em ciclos iterativos e incrementais com envolvimento contínuo do cliente (I); o XP adota o Desenvolvimento Orientado a Testes (TDD), escrevendo testes automatizados antes do código de produção (II); e o Kanban oferece gestão visual do fluxo de trabalho (IV). A afirmação III é incorreta porque o responsável por gerenciar e priorizar o Product Backlog no Scrum é o Product Owner (Dono do Produto), e não o Scrum Master."
+      },
+      {
+        id: "2021-Q21",
+        year: "2021",
+        number: "Q21",
+        topic: "Processos de Software",
+        subtopic: "Gestão de Configuração de Software",
+        stem: "No decorrer de um projeto de desenvolvimento de software é compreensível que mudanças venham a ocorrer, sejam por novos entendimentos dos atores envolvidos ou até mesmo de novas demandas apresentadas pelos clientes. Nesta perspectiva, a Gestão de Configuração de Software estabelece um conjunto de atividades para gerenciar alterações através de todo o ciclo de vida de um software.",
+        source: "PRESSMAN, R. S. Engenharia de Software: uma abordagem profissional. 8. ed. Porto Alegre: Artmed Editora S.A. e McGraw-Hill Education, 2016 (adaptado).",
+        statements: [],
+        prompt: "Com base no texto, assinale a opção correta acerca das atividades de gestão de configuração de software.",
+        options: [
+          { letter: "A", text: "Identificação de itens na configuração de software, gerenciamento de alterações, validação de versões e controle de qualidade." },
+          { letter: "B", text: "Identificação de objetos na configuração de software, controle de versão, controle de alterações, auditoria de configuração e relatório de status." },
+          { letter: "C", text: "Gerência de projeto, gerência de configuração de software, ciclo de vida do projeto, processo de software e evolução das configurações." },
+          { letter: "D", text: "Construção de modelo de requisitos, métricas para modelo de projeto, métricas de controle de versão e relatório de manutenção." },
+          { letter: "E", text: "Identificação de alterações, controle de versão, mapeamento de alteração e notificação da alteração aos envolvidos." }
+        ],
+        correct: "B",
+        justification: "Segundo Roger Pressman, o processo de Gestão de Configuração de Software (GCS) é estruturado exatamente em cinco tarefas fundamentais: (1) identificação de objetos na configuração de software, (2) controle de versão, (3) controle de alterações (mudanças), (4) auditoria de configuração e (5) relatório de status (emissão de relatórios de situação)."
+      },
+      {
+        id: "2021-Q22",
+        year: "2021",
+        number: "Q22",
+        topic: "Processos de Software",
+        subtopic: "Gerência de Configuração de Software (GCS)",
+        stem: "Um ponto importante para fábricas de software é a garantia de que seus produtos e/ou serviços acompanhem as diversas mudanças ocasionadas pelo mundo corporativo. As restrições de orçamento ou cronograma, reestruturação do negócio, modificações de regras de negócio ou novas necessidades do cliente, geram mudanças inevitáveis. Nesse cenário, a utilização de um processo de Gerência de Configuração de Software (GCS) que contemple características necessárias para gerenciar e controlar a evolução de um software, através do controle formal de versão e solicitação de mudanças, é extremamente importante.\n\nSobre o processo de Gerência de Configuração de Software (GCS), avalie as afirmações a seguir.",
+        statements: [
+          { roman: "I.", text: "O controle de versão possibilita o compartilhamento de dados e a edição colaborativa, permitindo a gestão de diferentes ramos de desenvolvimento e possibilitando a existência de diferentes versões de forma simultânea." },
+          { roman: "II.", text: "A auditoria de configuração é uma atividade de garantia de qualidade do sistema que tem por objetivo assegurar que a qualidade do software seja mantida quando feitas alterações requisitadas." },
+          { roman: "III.", text: "O relatório de status de configuração possui informações sobre o GCS, tendo por objetivo manter o cliente informado sobre as alterações, e deve ser gerado ao final do processo." },
+          { roman: "IV.", text: "A GCS proporciona um conjunto de atividades de acompanhamento e controle de mudanças que é iniciado logo depois que o software for fornecido ao cliente e colocado em operação." }
+        ],
+        prompt: "É correto apenas o que se afirma em",
+        options: [
+          { letter: "A", text: "I e II." },
+          { letter: "B", text: "II e III." },
+          { letter: "C", text: "III e IV." },
+          { letter: "D", text: "I, II e IV." },
+          { letter: "E", text: "I, III e IV." }
+        ],
+        correct: "A",
+        justification: "As afirmações I e II estão corretas: o controle de versão permite trabalho colaborativo e ramificações (branches) simultâneas (I), e a auditoria de configuração verifica se a mudança foi adequadamente implementada e se os padrões de qualidade foram preservados (II). A III é incorreta pois o relatório de status é gerado continuamente ao longo do projeto (e não apenas ao final), e a IV é incorreta pois a GCS inicia-se desde o começo do projeto de desenvolvimento, não apenas após a entrega em operação."
+      },
+      {
+        id: "2021-Q23",
+        year: "2021",
+        number: "Q23",
+        topic: "Processos de Software",
+        subtopic: "Evolução e Manutenção de Software",
+        stem: "A evolução de sistemas de software legados pode ser dividida em três categorias: manutenção, modernização e substituição. De acordo com a figura a seguir, conforme o tempo aumenta, a quantidade de funcionalidades também cresce. No primeiro período de evolução a manutenção é realizada, pois as necessidades de negócio são alteradas e o sistema precisa suprir as mudanças por meio da manutenção. No segundo período é realizada a modernização do sistema, pois as necessidades de negócio continuam a crescer, mas há mudanças mais significativas que se fazem necessárias. Além da substituição do sistema de software, nos casos em que o modelo de negócio não atende mais a necessidade da empresa, a manutenção e modernização também não são mais suficientes.",
+        figureSvg: `
+          <svg viewBox="0 0 720 310" width="100%" style="max-width:660px; height:auto;" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrowAxis" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#1e293b"/>
+              </marker>
+            </defs>
+            <!-- Eixos -->
+            <line x1="65" y1="265" x2="65" y2="20" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrowAxis)"/>
+            <line x1="65" y1="265" x2="690" y2="265" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrowAxis)"/>
+            <text x="25" y="145" transform="rotate(-90 25,145)" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">Funcionalidade</text>
+            <text x="375" y="295" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">Tempo</text>
+
+            <!-- Linha tracejada Necessidades de Negócio -->
+            <line x1="65" y1="195" x2="660" y2="35" stroke="#64748b" stroke-width="2.2" stroke-dasharray="6,5"/>
+            <text x="225" y="140" transform="rotate(-15 225,140)" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#334155">Necessidades de Negócio</text>
+
+            <!-- Curva Software 1 + Escadas de Manutenção e Modernização -->
+            <polyline points="65,265 170,165 200,165 200,152 230,152 230,140 260,140 260,128 295,128 325,95 360,95 360,82 400,82 400,66 465,66 465,265"
+                      fill="none" stroke="#0f172a" stroke-width="2.5"/>
+            <text x="108" y="212" transform="rotate(-43 108,212)" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#0f172a">Software 1</text>
+
+            <!-- Curva Software 2 -->
+            <polyline points="445,265 495,52 525,52 525,40 555,40 555,28 595,28"
+                      fill="none" stroke="#0f172a" stroke-width="2.5"/>
+            <text x="462" y="175" transform="rotate(-76 462,175)" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#0f172a">Software 2</text>
+
+            <!-- Elipses de destaque -->
+            <ellipse cx="235" cy="146" rx="75" ry="26" fill="none" stroke="#dc2626" stroke-width="1.8"/>
+            <ellipse cx="385" cy="82" rx="88" ry="28" fill="none" stroke="#dc2626" stroke-width="1.8"/>
+
+            <!-- Caixas de Rótulo -->
+            <rect x="75" y="232" width="132" height="24" rx="5" fill="#0284c7"/>
+            <text x="141" y="248" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">Software é construído</text>
+
+            <rect x="190" y="182" width="90" height="24" rx="5" fill="#fef08a" stroke="#eab308"/>
+            <text x="235" y="198" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#854d0e" text-anchor="middle">Manutenção</text>
+
+            <rect x="218" y="34" width="128" height="34" rx="5" fill="#fef08a" stroke="#eab308"/>
+            <text x="282" y="49" font-family="Inter,sans-serif" font-size="10.5" font-weight="700" fill="#854d0e" text-anchor="middle">Segundo período</text>
+            <text x="282" y="62" font-family="Inter,sans-serif" font-size="10.5" font-weight="700" fill="#854d0e" text-anchor="middle">de manutenção</text>
+
+            <rect x="335" y="120" width="98" height="24" rx="5" fill="#bbf7d0" stroke="#22c55e"/>
+            <text x="384" y="136" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#166534" text-anchor="middle">Modernização</text>
+
+            <rect x="520" y="72" width="142" height="34" rx="5" fill="#fef08a" stroke="#eab308"/>
+            <text x="591" y="87" font-family="Inter,sans-serif" font-size="10.5" font-weight="700" fill="#854d0e" text-anchor="middle">Manutenção do</text>
+            <text x="591" y="100" font-family="Inter,sans-serif" font-size="10.5" font-weight="700" fill="#854d0e" text-anchor="middle">segundo software</text>
+
+            <rect x="515" y="165" width="126" height="34" rx="5" fill="#f3e8ff" stroke="#a855f7"/>
+            <text x="578" y="180" font-family="Inter,sans-serif" font-size="10.5" font-weight="700" fill="#6b21a8" text-anchor="middle">Substituição</text>
+            <text x="578" y="193" font-family="Inter,sans-serif" font-size="10.5" font-weight="700" fill="#6b21a8" text-anchor="middle">do software</text>
+          </svg>
+        `,
+        figureCaption: "Representação gráfica da evolução de sistemas legados (funcionalidade × tempo). Fonte: SEACORD et al. (2003).",
+        statements: [],
+        prompt: "De acordo com a figura apresentada e considerando um sistema de software implantado de ERP (Enterprise Resource Planning - Planejamento de Recursos Empresariais) contendo um conjunto de módulos que integra todos os departamentos existentes de uma empresa, observou-se a necessidade de criação de um relatório gerencial de comissão da equipe de vendas. Nesse contexto, é correto afirmar que a manutenção a ser realizada é",
+        options: [
+          { letter: "A", text: "corretiva." },
+          { letter: "B", text: "evolutiva." },
+          { letter: "C", text: "funcional." },
+          { letter: "D", text: "preventiva." },
+          { letter: "E", text: "adaptativa." }
+        ],
+        correct: "B",
+        justification: "A criação de um novo relatório gerencial acrescenta uma nova funcionalidade ao sistema em resposta às novas necessidades de negócio da organização. Na Engenharia de Software (Sommerville / ISO/IEC 14764), a modificação realizada para implementar novos requisitos ou aprimorar funcionalidades existentes caracteriza a manutenção evolutiva (ou perfectiva)."
+      },
+      {
+        id: "2021-Q25",
+        year: "2021",
+        number: "Q25",
+        topic: "Processos de Software",
+        subtopic: "Modelos de Processo (Incremental e RAD)",
+        stem: "Uma determinada empresa do ramo de piscicultura solicitou a uma instituição especializada no desenvolvimento de softwares de gestão a construção de um sistema que fosse capaz de gerenciar o processo de criação dos peixes, que começava ainda na fase de alevinos, estendia-se para a engorda, finalizando na fase adulta com a venda do peixe. O sistema deveria disponibilizar funcionalidades para armazenar informações sobre toda a etapa da criação, mortandade e rações utilizadas na engorda dos peixes, viabilizando uma melhor tomada de decisão dos investidores. Como não havia nenhuma solução e a demanda por peixes estava aumentando, a empresa solicitou extrema urgência na construção da aplicação.\n\nConsiderando o processo de desenvolvimento de software que deverá ser utilizado para construir o sistema mencionado no texto, avalie as afirmações a seguir.",
+        statements: [
+          { roman: "I.", text: "Para desenvolver o sistema, deve ser adotado um processo baseado no modelo cascata, pois ele se adapta melhor a cenários com muitas mudanças." },
+          { roman: "II.", text: "Por se tratar de uma aplicação com escopo pequeno, o modelo espiral deverá ser utilizado no desenvolvimento do sistema solicitado, já que reduzirá riscos por meio da prototipação de especificações de cada fase dos peixes e diminuirá o tempo de entrega." },
+          { roman: "III.", text: "O modelo incremental deve ser utilizado na construção do software descrito no cenário, já que partes do sistema referentes à fase inicial dos peixes poderiam ser disponibilizadas, enquanto as demais estão nas etapas de concepção e desenvolvimento." },
+          { roman: "IV.", text: "Em razão da extrema urgência no desenvolvimento do software solicitado, a empresa deve elaborar seu processo utilizando o modelo RAD (Rapid Application Development)." }
+        ],
+        prompt: "É correto apenas o que se afirma em",
+        options: [
+          { letter: "A", text: "I." },
+          { letter: "B", text: "IV." },
+          { letter: "C", text: "I e II." },
+          { letter: "D", text: "II e III." },
+          { letter: "E", text: "III e IV." }
+        ],
+        correct: "E",
+        justification: "As afirmações III e IV estão corretas: o modelo incremental permite entregar operacionalmente os módulos das etapas iniciais (ex.: fase de alevinos) enquanto as etapas subsequentes (engorda e venda) continuam em desenvolvimento (III); e o RAD (Rapid Application Development) é um modelo incremental voltado especificamente para ciclos de desenvolvimento extremamente curtos e entrega urgente mediante construção baseada em componentes (IV). A I é falsa pois o modelo cascata é rígido e não se adapta bem a mudanças; a II é falsa pois o modelo espiral é indicado para projetos grandes, complexos e de alto risco, não reduzindo necessariamente o tempo de entrega para escopos pequenos."
+      },
+      {
+        id: "2017-Q17",
+        year: "2017",
+        number: "Q17",
+        topic: "Processos de Software",
+        subtopic: "Ciclo de Vida e Manutenção",
+        stem: "Após a implantação de um sistema em ambiente de produção, este passa para a fase de manutenção dentro do ciclo de vida do desenvolvimento de software. Os sistemas geralmente necessitam de diversos tipos de manutenção durante sua existência.\n\nConsiderando a etapa de manutenção no processo de desenvolvimento de software, avalie as afirmações a seguir.",
+        statements: [
+          { roman: "I.", text: "A fase de manutenção é uma parte explícita do modelo em cascata do processo de desenvolvimento de software." },
+          { roman: "II.", text: "A atualização do sistema para inserir customizações é considerada um tipo de manutenção." },
+          { roman: "III.", text: "A depuração do programa é um processo específico da fase de desenvolvimento e um tipo de manutenção." },
+          { roman: "IV.", text: "O acréscimo de novas funções a um sistema existente, sem perturbar sua operação, é considerado um tipo de manutenção." },
+          { roman: "V.", text: "A manutenção do sistema está relacionada ao aumento do ciclo de vida do software." }
+        ],
+        prompt: "É correto apenas o que se afirma em",
+        options: [
+          { letter: "A", text: "I e III." },
+          { letter: "B", text: "IV e V." },
+          { letter: "C", text: "I, II e III." },
+          { letter: "D", text: "I, II, IV e V." },
+          { letter: "E", text: "II, III, IV e V." }
+        ],
+        correct: "D",
+        justification: "As afirmações I, II, IV e V são verdadeiras: no modelo clássico em cascata, a etapa final explícita após a implantação é a manutenção (I); customizações e adaptações constituem manutenção adaptativa/evolutiva (II); a adição de novas funcionalidades sem interromper a operação corresponde à manutenção evolutiva (IV); e a manutenção contínua prolonga a vida útil do software (V). A afirmação III é incorreta pois a depuração (debugging) durante a construção não é classificada como tipo de manutenção (que ocorre após a entrega em produção)."
+      },
+      {
+        id: "2017-Q21",
+        year: "2017",
+        number: "Q21",
+        topic: "Processos de Software",
+        subtopic: "Modelos de Processo (Incremental, Espiral, Cascata)",
+        stem: "Os modelos de processo foram propostos para trazer ordem ao caos existente na área de desenvolvimento de software. A história mostra que esses modelos trouxeram considerável contribuição no trabalho da engenharia de software.",
+        source: "PRESSMAN, R. S. Engenharia de software: uma abordagem profissional. 8. ed. Porto Alegre: AMGH, 2016 (adaptado).",
+        statements: [
+          { roman: "I.", text: "São atividades do modelo incremental: especificação, desenvolvimento e validação." },
+          { roman: "II.", text: "No modelo espiral, a fase de modelagem é responsável, entre outras atividades, pela estimativa, cronograma e análise de risco." },
+          { roman: "III.", text: "O modelo cascata sugere uma abordagem sequencial e sistemática para o desenvolvimento de software, iniciando na especificação de requisitos e finalizando com a entrega do software concluído." }
+        ],
+        prompt: "É correto o que se afirma em",
+        options: [
+          { letter: "A", text: "II, apenas." },
+          { letter: "B", text: "III, apenas." },
+          { letter: "C", text: "I e II, apenas." },
+          { letter: "D", text: "I e III, apenas." },
+          { letter: "E", text: "I, II e III." }
+        ],
+        correct: "D",
+        justification: "As afirmações I e III estão corretas: no desenvolvimento incremental (conforme Sommerville), as atividades fundamentais de especificação, desenvolvimento e validação são intercaladas para produzir incrementos sucessivos (I); e o modelo cascata caracteriza-se pela abordagem linear e sequencial desde a comunicação/requisitos até a entrega (III). A afirmação II é falsa porque, no modelo espiral de Pressman, estimativa, cronograma e análise de risco pertencem à atividade de Planejamento, e não à de Modelagem."
+      },
+      {
+        id: "2017-Q22",
+        year: "2017",
+        number: "Q22",
+        topic: "Processos de Software",
+        subtopic: "Gerência de Configuração e Controle de Versão",
+        stem: "Um desenvolvedor de software recém-formado foi contratado para a implementação de um projeto em uma empresa e, em reunião, recebeu várias explicações sobre como a gerência de configuração funcionava.\n\nConsiderando essa situação, avalie as afirmações a seguir, referentes às informações dadas ao desenvolvedor.",
+        statements: [
+          { roman: "I.", text: "Inicialmente, para ter acesso à base de desenvolvimento, o profissional deve realizar uma operação de checkout para baixar os arquivos do projeto que estão armazenados no servidor." },
+          { roman: "II.", text: "Na situação em que mais de um desenvolvedor estiver modificando um mesmo documento, ao se tentar realizar uma operação de commit, pode ser necessário realizar uma operação de tag (release) para resolução do conflito entre a versão local e a versão mais recente no repositório, caso algum desenvolvedor tenha submetido uma mudança no documento previamente." },
+          { roman: "III.", text: "No desenvolvimento de um novo caso de uso, em que diversos arquivos sejam modificados, é recomendada a criação de uma ramificação (branch)." },
+          { roman: "IV.", text: "A versão estável é o ramo principal de desenvolvimento, que segue do começo do desenvolvimento até o momento presente." }
+        ],
+        prompt: "É correto apenas o que se afirma em",
+        options: [
+          { letter: "A", text: "I e II." },
+          { letter: "B", text: "I e III." },
+          { letter: "C", text: "II e IV." },
+          { letter: "D", text: "I, III e IV." },
+          { letter: "E", text: "II, III e IV." }
+        ],
+        correct: "B",
+        justification: "As afirmações I e III estão corretas: o checkout extrai uma cópia de trabalho dos artefatos do repositório para o ambiente local (I), e a criação de um branch isola o desenvolvimento de uma nova funcionalidade/caso de uso sem comprometer a linha principal (III). A II é falsa porque conflitos de commit são resolvidos via update/merge (mesclagem), enquanto tag apenas rotula um marco estático; a IV é falsa porque o ramo principal (trunk/main) é a linha principal de evolução, não necessariamente representando apenas uma versão estável congelada."
+      },
+      {
+        id: "2014-Q24",
+        year: "2014",
+        number: "Q24",
+        topic: "Processos de Software",
+        subtopic: "Rational Unified Process (RUP)",
+        stem: "O RUP (Rational Unified Process) é subdividido em Fases, que indicam a ênfase que é dada ao projeto em um dado instante, e em Fluxos de trabalho, que definem os grupos de atividades a serem realizadas ao longo das fases.",
+        statements: [],
+        prompt: "Considerando que no desenvolvimento de software utilizam-se técnicas de análise e projeto orientado a objetos e que as atividades sejam distribuídas de acordo com o RUP, o momento que devem ser elaborados os diagramas de classes e de interação entre os objetos do sistema é",
+        options: [
+          { letter: "A", text: "na fase de Concepção, no fluxo de Modelagem de negócios." },
+          { letter: "B", text: "na fase de Elaboração, no fluxo de Análise e Design." },
+          { letter: "C", text: "na fase de Concepção, no fluxo de Análise e Design." },
+          { letter: "D", text: "na fase de Elaboração, no fluxo de Requisitos." },
+          { letter: "E", text: "na fase de Concepção, no fluxo de Requisitos." }
+        ],
+        correct: "B",
+        justification: "No RUP, a fase de Elaboração tem como foco estabelecer a arquitetura do sistema, analisar o domínio do problema e mitigar riscos técnicos. É durante essa fase que a disciplina (fluxo de trabalho) de Análise e Design ganha maior intensidade, produzindo os modelos estruturais (diagramas de classes) e comportamentais (diagramas de interação/sequência) do sistema."
+      },
+      {
+        id: "2014-Q30",
+        year: "2014",
+        number: "Q30",
+        topic: "Processos de Software",
+        subtopic: "Gerência de Configuração de Software",
+        stem: "A gerência de configuração de software, também chamada de gerência de mudança e configuração, é o processo que mantém atualizadas as informações dos elementos de configuração.\n\nA esse respeito, avalie as afirmações a seguir.",
+        statements: [
+          { roman: "I.", text: "A auditoria de software é um processo que consiste em verificar se a linha de base foi atendida ou se os requisitos do sistema foram atendidos." },
+          { roman: "II.", text: "A linha de base é o marco de referência, a partir do qual serão feitos os controles de mudança, e pode ser a versão 1.0 de um software." },
+          { roman: "III.", text: "Um item de configuração é um elemento unitário, que compõe aquele software e deve ser gerenciado." }
+        ],
+        prompt: "É correto o que se afirma em",
+        options: [
+          { letter: "A", text: "I, apenas." },
+          { letter: "B", text: "II, apenas." },
+          { letter: "C", text: "I e III, apenas." },
+          { letter: "D", text: "II e III, apenas." },
+          { letter: "E", text: "I, II e III." }
+        ],
+        correct: "D",
+        justification: "As afirmações II e III estão corretas: uma linha de base (baseline) é uma especificação ou produto formalmente revisado e aprovado que serve de marco de referência para alterações futuras (II), e um item de configuração de software (ICS) é qualquer artefato ou elemento unitário criado no processo de software colocado sob controle da GCS (III). A afirmação I é incorreta porque a auditoria de configuração verifica se as mudanças aprovadas em uma linha de base foram corretamente implementadas em conformidade com os padrões de configuração, e não substitui a validação geral de todos os requisitos do sistema."
+      },
+
+      // ---------------------- 1.2. QUALIDADE DE SOFTWARE (3) ----------------------
+      {
+        id: "2021-Q33",
+        year: "2021",
+        number: "Q33",
+        topic: "Qualidade de Software",
+        subtopic: "Maturidade de Processos e CMMI",
+        stem: "Um dos fatores essenciais para o sucesso de um Processo de Software é a habilidade de capturar e gerenciar as mudanças e oportunidades de negócio. Muitas vezes as oportunidades de negócio são perdidas em função do tempo requerido para efetivar mudanças nos sistemas de software ou em função de defeitos nesse sistema. Basicamente, o software é o Produto do Processo de Software. Assim, identificar o grau de desenvolvimento do processo de software de uma empresa é o passo inicial para o seu melhoramento.\n\nO Modelo de Maturidade da Capacidade (CMMi) descreve práticas, processos e atividades de gestão, guiando o melhoramento do Processo de Software para atingir o mais elevado nível de maturidade da capacidade.\n\nConsiderando os diversos aspectos do processo de desenvolvimento de um produto ou sistema de software, avalie as afirmações a seguir.",
+        statements: [
+          { roman: "I.", text: "A maturidade implica no crescimento da capacidade e indica tanto a efetividade do Processo de Software quanto o grau de consistência com que este é aplicado nos diferentes projetos desenvolvidos pela organização." },
+          { roman: "II.", text: "A maturidade do Processo de Software implica melhorias contínuas do processo com base em etapas evolutivas que se caracterizam pela capacidade de inovação e absorção de novas tecnologias." },
+          { roman: "III.", text: "A maturidade do Processo de Software implica na sua institucionalização por meio de políticas e padrões organizacionais levando a uma cultura corporativa de métodos, práticas e procedimentos com efetividade plenamente reconhecida." },
+          { roman: "IV.", text: "Cada nível do CMMi implica na satisfação de um conjunto de metas de processo que estabilizam um componente importante do Processo de Software e representa o seu estágio de maturidade da capacidade." }
+        ],
+        prompt: "É correto apenas o que se afirma em",
+        options: [
+          { letter: "A", text: "III." },
+          { letter: "B", text: "I e II." },
+          { letter: "C", text: "II e IV." },
+          { letter: "D", text: "I, III e IV." },
+          { letter: "E", text: "I, II, III e IV." }
+        ],
+        correct: "D",
+        justification: "As afirmações I, III e IV refletem corretamente os fundamentos do CMMI: maturidade expressa a consistência e efetividade com que os processos são aplicados em toda a organização (I), resulta da institucionalização de políticas e padrões na cultura organizacional (III) e cada nível de maturidade exige o cumprimento das metas específicas e genéricas de suas áreas de processo (IV). A afirmação II é incorreta porque a melhoria contínua e a inovação tecnológica caracterizam especificamente apenas o mais alto estágio (Nível 5 - Em Otimização), não sendo um traço presente em todos os níveis de maturidade."
+      },
+      {
+        id: "2017-Q13",
+        year: "2017",
+        number: "Q13",
+        topic: "Qualidade de Software",
+        subtopic: "Modelo de Maturidade CMMI",
+        stem: "Na área de desenvolvimento de software, prazos, custos e qualidade são questões que demandam gerenciamento, para que se evitem atrasos, estouros orçamentários e sistemas que não atendam aos requisitos.\n\nSobre o modelo CMMI, avalie as asserções a seguir e a relação proposta entre elas.",
+        statements: [
+          { roman: "I.", text: "O CMMI fornece diretrizes para a melhoria dos processos e habilidades organizacionais, incluindo o ciclo de vida de produtos e serviços, que abrange as fases de concepção, desenvolvimento, aquisição, entrega e manutenção." },
+          { isConnector: true, text: "PORQUE" },
+          { roman: "II.", text: "As empresas brasileiras estão aderindo a programas de fomento à melhoria da qualidade de software, por meio da aplicação do modelo de maturidade CMMI, que é mais direcionado às pequenas e médias empresas, apesar de também ser um modelo aplicável em grandes organizações, sejam elas públicas ou privadas." }
+        ],
+        prompt: "A respeito dessas asserções, assinale a opção correta.",
+        options: [
+          { letter: "A", text: "As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I." },
+          { letter: "B", text: "As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa correta da I." },
+          { letter: "C", text: "A asserção I é uma proposição verdadeira, e a II é uma proposição falsa." },
+          { letter: "D", text: "A asserção I é uma proposição falsa, e a II é uma proposição verdadeira." },
+          { letter: "E", text: "As asserções I e II são proposições falsas." }
+        ],
+        correct: "C",
+        justification: "A asserção I é verdadeira, pois o CMMI (em suas constelações DEV, ACQ e SVC) fornece boas práticas para melhoria de processos ao longo de todo o ciclo de vida de produtos e serviços. A asserção II é falsa porque o CMMI não é um modelo direcionado prioritariamente às pequenas e médias empresas (ao contrário do modelo brasileiro MPS.BR, criado pela Softex justamente para atender à realidade e aos custos das PMEs brasileiras, já que o CMMI possui estrutura pesada e alto custo de implantação/avaliação voltado originalmente a grandes corporações)."
+      },
+      {
+        id: "2014-Q33",
+        year: "2014",
+        number: "Q33",
+        topic: "Qualidade de Software",
+        subtopic: "Garantia e Controle da Qualidade (SQA)",
+        stem: "Às vezes, garantia de qualidade significa simplesmente a definição de procedimentos, processos e padrões que visam reforçar que a qualidade de software seja atingida. Em outros casos, a garantia de qualidade também inclui todo o gerenciamento de configuração, atividades de verificação e validação aplicados após o produto ter sido entregue por uma equipe de desenvolvimento.\n\nQualquer alteração inserida no processo de desenvolvimento de software aumenta a amplitude de erros e tende a descaracterizar o projeto inicialmente planejado, afetando a qualidade do produto ou serviço. O controle e a garantia da qualidade de software visam satisfazer as necessidades dos stakeholders; assegurar que os requisitos dos usuários sejam atendidos pelas especificações dos produtos ou serviços; definir os processos para que o desenvolvimento do sistema atenda esses requisitos; gerenciar versões, mudanças, releases e a construção do sistema. A fim de assegurar a garantia da qualidade do software é indispensável definir um processo para controlar a documentação elaborada durante o processo de desenvolvimento.\n\nConsiderando essa situação, avalie as afirmações a seguir.",
+        source: "SOMMERVILLE, I. Engenharia de Software. 9. ed., São Paulo, 2011, p.455.",
+        statements: [
+          { roman: "I.", text: "As técnicas de verificação e validação de software estabelecem a confiança de que o sistema que esteja sendo desenvolvido é adequado ao seu propósito." },
+          { roman: "II.", text: "A gerência de configuração provê pontos de controle sobre os artefatos produzidos e modificados por diferentes recursos." },
+          { roman: "III.", text: "O gerenciamento de mudanças deve documentar a detecção de bugs e problemas introduzidos após a construção de uma nova versão do software." },
+          { roman: "IV.", text: "Faz parte das atribuições da equipe de garantia de qualidade examinar se os testes do sistema proporcionam cobertura dos requisitos e manter registros adequados do processo de teste." },
+          { roman: "V.", text: "A revisão de software tem por objetivo armazenar os documentos num repositório central." }
+        ],
+        prompt: "É correto apenas o que se afirma em",
+        options: [
+          { letter: "A", text: "I, II e III." },
+          { letter: "B", text: "I, II e IV." },
+          { letter: "C", text: "I, III e V." },
+          { letter: "D", text: "II, IV e V." },
+          { letter: "E", text: "III, IV e V." }
+        ],
+        correct: "B",
+        justification: "As afirmações I, II e IV estão corretas: V&V assegura a adequação do sistema ao propósito pretendido (I); a gerência de configuração controla a evolução e as linhas de base dos artefatos (II); e a Garantia da Qualidade (SQA) audita a rastreabilidade/cobertura dos testes em relação aos requisitos e seus registros (IV). A III é incorreta pois o gerenciamento de mudanças controla solicitações de alteração e seus impactos, não sendo apenas um registro pós-construção de bugs; e a V é incorreta pois a revisão técnica de software tem como objetivo detectar defeitos e verificar conformidade em artefatos, não apenas armazenar documentos em repositório."
+      },
+
+      // ---------------------- 1.3. VERIFICAÇÃO E VALIDAÇÃO (4) ----------------------
+      {
+        id: "2021-Q24",
+        year: "2021",
+        number: "Q24",
+        topic: "Verificação e Validação de Software",
+        subtopic: "Níveis, Técnicas e Tipos de Teste",
+        stem: "Em razão da Covid-19, muitos estabelecimentos viram no delivery uma forma de manter os negócios funcionando. As mudanças de hábitos dos brasileiros revelaram um aumento do interesse nesse tipo de serviço.\n\nNesse contexto, um restaurante solicitou o desenvolvimento de um sistema web que possibilite gerenciar automaticamente os pedidos de entrega. O sistema foi projetado com base em tecnologias web e modelado com UML (Unified Modeling Language). Durante o processo de desenvolvimento foram descritos alguns itens importantes que merecem atenção no processo de teste de software.\n\nConsiderem as seguintes descrições definidas pelo analista de teste:\n01 - Verificar se o método \"Finalizar Pedido\" da classe \"Pedido\" está funcionando corretamente.\n02 - Garantir que o sistema funcione corretamente em diferentes navegadores de internet.\n03 - O sistema deve passar por testes rigorosos na estrutura lógica interna do software.\n04 - O sistema deve garantir, no mínimo, o registro de 100 pedidos simultâneos.\n05 - O usuário deve testar o sistema em um ambiente controlado sob a supervisão dos desenvolvedores.\n\nConsiderando o texto e as descrições apresentadas, avalie as afirmações a seguir.",
+        statements: [
+          { roman: "I.", text: "A descrição 01 deve ser verificada com teste unitário." },
+          { roman: "II.", text: "A descrição 02 deve ser executada com a abordagem caixa-branca." },
+          { roman: "III.", text: "A descrição 03 deve ser executada com a abordagem caixa-preta." },
+          { roman: "IV.", text: "A descrição 04 deve ser verificada com teste carga." },
+          { roman: "V.", text: "A descrição 05 deve ser classificada como teste alfa." }
+        ],
+        prompt: "É correto apenas o que se afirma em",
+        options: [
+          { letter: "A", text: "II e III." },
+          { letter: "B", text: "I, II e IV." },
+          { letter: "C", text: "I, III e V." },
+          { letter: "D", text: "I, IV e V." },
+          { letter: "E", text: "II, III, IV e V." }
+        ],
+        correct: "D",
+        justification: "As afirmações I, IV e V estão corretas: testar um método específico de uma classe isoladamente é teste unitário (I); verificar o comportamento sob volume esperado de requisições simultâneas é teste de carga (IV); e o teste realizado pelo usuário final no ambiente controlado do desenvolvedor é o teste alfa (V). As afirmações II e III estão invertidas: o teste de compatibilidade entre navegadores (02) utiliza abordagem caixa-preta, enquanto a análise da estrutura lógica interna do código (03) caracteriza o teste estrutural ou caixa-branca."
+      },
+      {
+        id: "2017-Q23",
+        year: "2017",
+        number: "Q23",
+        topic: "Verificação e Validação de Software",
+        subtopic: "Testes Funcionais, Aceitação e V&V",
+        stem: "Um software com defeito pode ser consequência de problemas no levantamento dos requisitos, uma vez que o requisito pode ser ambíguo porque o cliente não estava convicto da sua real necessidade ou porque a equipe o interpretou mal e registrou uma especificação de forma incorreta. Por esses motivos, as verificações, as validações e os testes são fundamentais para se certificar da qualidade do software resultante.\n\nConsiderando esse contexto, avalie as afirmações a seguir.",
+        statements: [
+          { roman: "I.", text: "O teste funcional certifica se o software desempenha as funções especificadas nos requisitos." },
+          { roman: "II.", text: "O teste de desempenho valida a conformidade da especificação do processo de desenvolvimento de software." },
+          { roman: "III.", text: "O teste de aceitação é realizado pelo cliente a fim de validar se aquilo que foi implementado é o que foi solicitado." },
+          { roman: "IV.", text: "O teste de instalação, invariavelmente, é executado no local determinado pelo cliente para instalação do software." },
+          { roman: "V.", text: "As técnicas de verificação e validação de software asseguram que o sistema que está sendo desenvolvido seja adequado ao seu propósito." }
+        ],
+        prompt: "É correto apenas o que se afirma em",
+        options: [
+          { letter: "A", text: "I e IV." },
+          { letter: "B", text: "I, III e V." },
+          { letter: "C", text: "II, III e IV." },
+          { letter: "D", text: "II, IV e V." },
+          { letter: "E", text: "I, II, III e V." }
+        ],
+        correct: "B",
+        justification: "As afirmações I, III e V estão corretas: testes funcionais (caixa-preta) avaliam se o software executa as funções definidas nos requisitos (I); testes de aceitação envolvem o cliente/usuário final validando o atendimento às suas necessidades reais (III); e V&V garante que o sistema atende às especificações e às expectativas do usuário (V). A II é falsa porque teste de desempenho avalia requisitos não funcionais de tempo de resposta, vazão e uso de recursos do produto (e não a conformidade do processo); a IV é falsa porque testes de instalação podem ser simulados em ambiente de homologação/laboratório antes da ida ao ambiente do cliente."
+      },
+      {
+        id: "2014-Q28",
+        year: "2014",
+        number: "Q28",
+        topic: "Verificação e Validação de Software",
+        subtopic: "Testes de Interface, Usabilidade e Compatibilidade",
+        stem: "A verificação e a validação de uma interface de usuário ocorre em três pontos distintos: análise, projeto e teste. Considerando um cenário de uma aplicação web, tal verificação pode ser realizada através de testes de interface, testes de usabilidade e testes de compatibilidade.\n\nNesse contexto, avalie as afirmações a seguir.",
+        source: "PRESSMAN, R. Engenharia de Software: Uma Abordagem Profissional, 7 ed., Mc Graw Hill, 2011 (adaptado).",
+        statements: [
+          { roman: "I.", text: "O teste de interface experimenta mecanismos de interação e valida aspectos estéticos da interface do usuário, apontando erros específicos de interface e erros na maneira como a interface implementa as semânticas de navegação, funcionalidade ou exibição de conteúdo." },
+          { roman: "II.", text: "O teste de usabilidade avalia o grau com o qual os usuários podem interagir efetivamente com a aplicação e o grau em que a aplicação dirige as ações do usuário." },
+          { roman: "III.", text: "O primeiro passo no teste de compatibilidade é definir uma série de configurações típicas encontradas do lado cliente e suas respectivas variantes, identificando características como plataforma, sistema operacional e navegador." }
+        ],
+        prompt: "É correto o que se afirma em",
+        options: [
+          { letter: "A", text: "I, apenas." },
+          { letter: "B", text: "III, apenas." },
+          { letter: "C", text: "I e II, apenas." },
+          { letter: "D", text: "II e III, apenas." },
+          { letter: "E", text: "I, II e III." }
+        ],
+        correct: "E",
+        justification: "Todas as três afirmações reproduzem fielmente os conceitos de teste de WebApps de Roger Pressman: o teste de interface valida mecanismos de interação, estética, navegação e exibição de conteúdo (I); o teste de usabilidade mede a eficácia, eficiência e orientação das ações do usuário na interação com a aplicação (II); e o teste de compatibilidade inicia-se pelo mapeamento da matriz de configurações típicas do cliente — hardware/plataforma, sistema operacional e navegadores (III)."
+      },
+      {
+        id: "2014-Q31",
+        year: "2014",
+        number: "Q31",
+        topic: "Verificação e Validação de Software",
+        subtopic: "Teste Caixa-Branca e Complexidade Ciclomática",
+        stem: "Analise o fluxograma a seguir.",
+        figureSvg: `
+          <svg viewBox="0 0 700 280" width="100%" style="max-width:640px; height:auto;" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrowFlow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#1e293b"/>
+              </marker>
+            </defs>
+
+            <!-- Setas -->
+            <!-- Início -> 1 -->
+            <line x1="115" y1="36" x2="155" y2="36" stroke="#1e293b" stroke-width="2" marker-end="url(#arrowFlow)"/>
+            <!-- 1 -> 2 -->
+            <line x1="235" y1="36" x2="275" y2="36" stroke="#1e293b" stroke-width="2" marker-end="url(#arrowFlow)"/>
+            <!-- 2 -> 3 -->
+            <line x1="315" y1="56" x2="315" y2="82" stroke="#1e293b" stroke-width="2" marker-end="url(#arrowFlow)"/>
+            <!-- 3 -> 7 (esquerda) -->
+            <line x1="275" y1="106" x2="232" y2="106" stroke="#1e293b" stroke-width="2" marker-end="url(#arrowFlow)"/>
+            <!-- 3 -> 4 (direita) -->
+            <polyline points="355,106 455,106 455,148" fill="none" stroke="#1e293b" stroke-width="2" marker-end="url(#arrowFlow)"/>
+            <!-- 7 -> 9 (esquerda) -->
+            <polyline points="152,106 95,106 95,152" fill="none" stroke="#1e293b" stroke-width="2" marker-end="url(#arrowFlow)"/>
+            <!-- 7 -> 8 (baixo) -->
+            <line x1="192" y1="128" x2="192" y2="150" stroke="#1e293b" stroke-width="2" marker-end="url(#arrowFlow)"/>
+            <!-- 8 -> 9 (esquerda) -->
+            <line x1="152" y1="174" x2="136" y2="174" stroke="#1e293b" stroke-width="2" marker-end="url(#arrowFlow)"/>
+            <!-- 8 -> 5 (direita) -->
+            <line x1="232" y1="174" x2="275" y2="174" stroke="#1e293b" stroke-width="2" marker-end="url(#arrowFlow)"/>
+            <!-- 4 -> 5 (esquerda) -->
+            <line x1="415" y1="174" x2="356" y2="174" stroke="#1e293b" stroke-width="2" marker-end="url(#arrowFlow)"/>
+            <!-- 4 -> 6 (direita) -->
+            <line x1="495" y1="174" x2="538" y2="174" stroke="#1e293b" stroke-width="2" marker-end="url(#arrowFlow)"/>
+            <!-- 9 -> Fim -->
+            <polyline points="95,194 95,244 265,244" fill="none" stroke="#1e293b" stroke-width="2" marker-end="url(#arrowFlow)"/>
+            <!-- 5 -> Fim -->
+            <line x1="315" y1="194" x2="315" y2="222" stroke="#1e293b" stroke-width="2" marker-end="url(#arrowFlow)"/>
+            <!-- 6 -> Fim -->
+            <polyline points="578,194 578,244 365,244" fill="none" stroke="#1e293b" stroke-width="2" marker-end="url(#arrowFlow)"/>
+
+            <!-- Nós -->
+            <!-- Início -->
+            <rect x="35" y="18" width="80" height="36" rx="18" fill="#f8fafc" stroke="#1e293b" stroke-width="2"/>
+            <text x="75" y="41" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">Início</text>
+
+            <!-- 1 -->
+            <rect x="155" y="18" width="80" height="36" fill="#f8fafc" stroke="#1e293b" stroke-width="2"/>
+            <text x="195" y="41" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">1</text>
+
+            <!-- 2 -->
+            <rect x="275" y="18" width="80" height="36" fill="#f8fafc" stroke="#1e293b" stroke-width="2"/>
+            <text x="315" y="41" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">2</text>
+
+            <!-- 3 (Losango) -->
+            <polygon points="315,84 355,106 315,128 275,106" fill="#eef2ff" stroke="#4f46e5" stroke-width="2"/>
+            <text x="315" y="111" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">3</text>
+
+            <!-- 7 (Losango) -->
+            <polygon points="192,84 232,106 192,128 152,106" fill="#eef2ff" stroke="#4f46e5" stroke-width="2"/>
+            <text x="192" y="111" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">7</text>
+
+            <!-- 8 (Losango) -->
+            <polygon points="192,152 232,174 192,196 152,174" fill="#eef2ff" stroke="#4f46e5" stroke-width="2"/>
+            <text x="192" y="179" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">8</text>
+
+            <!-- 4 (Losango) -->
+            <polygon points="455,152 495,174 455,196 415,174" fill="#eef2ff" stroke="#4f46e5" stroke-width="2"/>
+            <text x="455" y="179" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">4</text>
+
+            <!-- 9 -->
+            <rect x="55" y="154" width="80" height="38" fill="#f8fafc" stroke="#1e293b" stroke-width="2"/>
+            <text x="95" y="178" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">9</text>
+
+            <!-- 5 -->
+            <rect x="275" y="154" width="80" height="38" fill="#f8fafc" stroke="#1e293b" stroke-width="2"/>
+            <text x="315" y="178" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">5</text>
+
+            <!-- 6 -->
+            <rect x="538" y="154" width="80" height="38" fill="#f8fafc" stroke="#1e293b" stroke-width="2"/>
+            <text x="578" y="178" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">6</text>
+
+            <!-- Fim -->
+            <rect x="267" y="225" width="96" height="36" rx="18" fill="#f8fafc" stroke="#1e293b" stroke-width="2"/>
+            <text x="315" y="248" font-family="Inter,sans-serif" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">Fim</text>
+          </svg>
+        `,
+        figureCaption: "Fluxograma de controle de fluxo para análise de caminhos independentes (Complexidade Ciclomática).",
+        statements: [
+          { roman: "I.", text: "Os caminhos 1-2-3-4-5, 1-2-3-4-6, 1-2-3-7-9, 1-2-3-7-8-9 formam um conjunto de caminhos de execução independentes." },
+          { roman: "II.", text: "O cálculo de complexidade ciclomática fornece a quantidade de caminhos independentes a testar." },
+          { roman: "III.", text: "Testes sobre caminhos independentes podem ser executados em programas procedurais, mas não podem ser executados em programas orientados a objetos." }
+        ],
+        prompt: "Em relação à execução de testes de caixa branca sobre este fluxograma, avalie as afirmações a seguir. É correto o que se afirma em",
+        options: [
+          { letter: "A", text: "I, apenas." },
+          { letter: "B", text: "III, apenas." },
+          { letter: "C", text: "I e II, apenas." },
+          { letter: "D", text: "II e III, apenas." },
+          { letter: "E", text: "I, II e III." }
+        ],
+        correct: "C",
+        justification: "As afirmações I e II estão corretas: o grafo possui 4 nós de decisão (3, 4, 7 e 8), resultando em complexidade ciclomática V(G) = 4 + 1 = 5 caminhos independentes (onde os 4 caminhos citados na assertiva I introduzem cada um uma nova aresta e compõem um subconjunto independente válido, completado por 1-2-3-7-8-5) (I e II). A afirmação III é falsa porque o teste de caminho básico (caixa-branca) aplica-se normalmente aos métodos e operações de classes em softwares orientados a objetos."
+      }
+    ];
+
+    /* ==========================================================================
+       ESTADO DA APLICAÇÃO & PERSISTÊNCIA (LOCALSTORAGE)
+       ========================================================================== */
+    const STORAGE_KEY_EXCLUDED = "enade_tads_excluded_ids_v1";
+    const STORAGE_KEY_BEST = "enade_tads_best_score_v1";
+    const STORAGE_KEY_THEME = "enade_tads_theme_v1";
+
+    let excludedIds = new Set();
+    let bestRecord = { score: 0, accuracy: 0 };
+    let selectedTopicFilter = "ALL";
+
+    // Estado da partida atual
+    let gameState = {
+      deck: [],
+      currentIndex: 0,
+      score: 0,
+      streak: 0,
+      bestStreak: 0,
+      answered: false,
+      results: [], // { question, chosenLetter, isCorrect }
+      secondsElapsed: 0,
+      timerInterval: null
+    };
+
+    /* ==========================================================================
+       INICIALIZAÇÃO
+       ========================================================================== */
+    function init() {
+      loadPersistedState();
+      bindEvents();
+      updateHomeStats();
+      renderManagerList();
+    }
+
+    function loadPersistedState() {
+      try {
+        const savedExcluded = localStorage.getItem(STORAGE_KEY_EXCLUDED);
+        if (savedExcluded) {
+          excludedIds = new Set(JSON.parse(savedExcluded));
+        }
+        const savedBest = localStorage.getItem(STORAGE_KEY_BEST);
+        if (savedBest) {
+          bestRecord = JSON.parse(savedBest);
+        }
+        const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
+        if (savedTheme === "light") {
+          document.body.classList.add("light-theme");
+          document.getElementById("btnThemeToggle").textContent = "🌙";
+        }
+      } catch (e) {
+        console.warn("Não foi possível carregar dados salvos:", e);
+      }
+    }
+
+    function saveExcludedState() {
+      try {
+        localStorage.setItem(STORAGE_KEY_EXCLUDED, JSON.stringify([...excludedIds]));
+      } catch (e) {
+        console.warn("Erro ao salvar exclusões:", e);
+      }
+      updateHomeStats();
+    }
+
+    function bindEvents() {
+      // Tema claro/escuro
+      document.getElementById("btnThemeToggle").addEventListener("click", () => {
+        const isLight = document.body.classList.toggle("light-theme");
+        document.getElementById("btnThemeToggle").textContent = isLight ? "🌙" : "☀️";
+        localStorage.setItem(STORAGE_KEY_THEME, isLight ? "light" : "dark");
+      });
+
+      // Modal Gerenciador
+      document.getElementById("btnOpenManager").addEventListener("click", openManagerModal);
+      document.getElementById("managerModal").addEventListener("click", (e) => {
+        if (e.target.id === "managerModal") closeManagerModal();
+      });
+
+      // Seleção de tema na Home
+      document.querySelectorAll("#themeSelector .chip-option").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("#themeSelector .chip-option").forEach((b) => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          selectedTopicFilter = btn.dataset.theme;
+          updateHomeStats();
+        });
+      });
+
+      // Iniciar Quiz
+      document.getElementById("btnStartQuiz").addEventListener("click", () => startQuiz());
+
+      // Próxima Questão
+      document.getElementById("btnNextQuestion").addEventListener("click", nextQuestion);
+
+      // Excluir questão atual durante o jogo
+      document.getElementById("btnExcludeCurrent").addEventListener("click", excludeCurrentInGame);
+
+      // Botões da tela final
+      document.getElementById("btnPlayAgain").addEventListener("click", () => startQuiz());
+      document.getElementById("btnRetryWrong").addEventListener("click", retryWrongQuestions);
+    }
+
+    /* ==========================================================================
+       ATUALIZAÇÃO DE CONTADORES E TELA INICIAL
+       ========================================================================== */
+    function getActiveQuestions(topic = "ALL") {
+      return QUESTIONS_DB.filter((q) => {
+        const notExcluded = !excludedIds.has(q.id);
+        const matchesTopic = topic === "ALL" || q.topic === topic;
+        return notExcluded && matchesTopic;
+      });
+    }
+
+    function updateHomeStats() {
+      const total = QUESTIONS_DB.length;
+      const activeAll = getActiveQuestions("ALL");
+      const excludedCount = total - activeAll.length;
+
+      // Topbar badge
+      document.getElementById("topbarActiveCount").textContent = `${activeAll.length}/${total}`;
+
+      // Cards de estatística
+      document.getElementById("statActive").textContent = `${activeAll.length} / ${total}`;
+      document.getElementById("statExcludedHint").textContent =
+        excludedCount === 0
+          ? "Nenhuma questão excluída"
+          : `${excludedCount} ${excludedCount === 1 ? "questão excluída" : "questões excluídas"}`;
+
+      document.getElementById("statBestScore").textContent = `${bestRecord.score} pts`;
+      document.getElementById("statBestAccuracy").textContent =
+        bestRecord.accuracy > 0 ? `Melhor marca: ${bestRecord.accuracy}% de acerto` : "Recorde pessoal";
+
+      // Contadores nos chips de tema
+      document.getElementById("countThemeAll").textContent = activeAll.length;
+      document.getElementById("countThemeProcessos").textContent = getActiveQuestions("Processos de Software").length;
+      document.getElementById("countThemeQualidade").textContent = getActiveQuestions("Qualidade de Software").length;
+      document.getElementById("countThemeVV").textContent = getActiveQuestions("Verificação e Validação de Software").length;
+
+      // Botão Iniciar
+      const availableForSelection = getActiveQuestions(selectedTopicFilter);
+      const startBtn = document.getElementById("btnStartQuiz");
+      if (availableForSelection.length === 0) {
+        startBtn.disabled = true;
+        startBtn.innerHTML = "<span>⚠️ Nenhuma questão ativa neste filtro</span>";
+      } else {
+        startBtn.disabled = false;
+        startBtn.innerHTML = `<span>▶ Iniciar Simulado (${availableForSelection.length} ${
+          availableForSelection.length === 1 ? "questão" : "questões"
+        })</span>`;
+      }
+
+      // Texto do rodapé do modal
+      const modalSummary = document.getElementById("modalSummaryText");
+      if (modalSummary) {
+        modalSummary.textContent = `${activeAll.length} de ${total} questões ativas no jogo`;
+      }
+    }
+
+    /* ==========================================================================
+       GERENCIADOR / EXCLUSÃO DE QUESTÕES
+       ========================================================================== */
+    function openManagerModal() {
+      renderManagerList();
+      document.getElementById("managerModal").classList.add("open");
+    }
+
+    function closeManagerModal() {
+      document.getElementById("managerModal").classList.remove("open");
+    }
+
+    function toggleQuestionExclusion(qId) {
+      if (excludedIds.has(qId)) {
+        excludedIds.delete(qId);
+        showToast("Questão reativada no simulado.");
+      } else {
+        excludedIds.add(qId);
+        showToast("Questão excluída do simulado.");
+      }
+      saveExcludedState();
+      renderManagerList();
+    }
+
+    function bulkToggleQuestions(shouldActivate) {
+      const filtered = getFilteredQuestionsForModal();
+      filtered.forEach((q) => {
+        if (shouldActivate) {
+          excludedIds.delete(q.id);
+        } else {
+          excludedIds.add(q.id);
+        }
+      });
+      saveExcludedState();
+      renderManagerList();
+      showToast(
+        shouldActivate
+          ? `${filtered.length} questões ativadas.`
+          : `${filtered.length} questões excluídas do jogo.`
+      );
+    }
+
+    function resetDefaultQuestions() {
+      excludedIds.clear();
+      saveExcludedState();
+      renderManagerList();
+      showToast("Todas as 17 questões foram restauradas!");
+    }
+
+    function getFilteredQuestionsForModal() {
+      const topicVal = document.getElementById("filterModalTopic").value;
+      const yearVal = document.getElementById("filterModalYear").value;
+      const statusVal = document.getElementById("filterModalStatus").value;
+
+      return QUESTIONS_DB.filter((q) => {
+        const isEx = excludedIds.has(q.id);
+        if (topicVal !== "ALL" && q.topic !== topicVal) return false;
+        if (yearVal !== "ALL" && q.year !== yearVal) return false;
+        if (statusVal === "ACTIVE" && isEx) return false;
+        if (statusVal === "EXCLUDED" && !isEx) return false;
+        return true;
+      });
+    }
+
+    function renderManagerList() {
+      const container = document.getElementById("managerQuestionList");
+      const list = getFilteredQuestionsForModal();
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:2rem; color:var(--text-secondary);">
+            Nenhuma questão encontrada para os filtros selecionados.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list
+        .map((q) => {
+          const isExcluded = excludedIds.has(q.id);
+          return `
+            <div class="q-manage-item ${isExcluded ? "excluded" : ""}">
+              <div class="q-manage-info">
+                <div class="q-manage-badges">
+                  <span class="tag-year">ENADE ${q.year} • ${q.number}</span>
+                  <span class="tag-topic">${q.topic}</span>
+                  <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">Gabarito: ${q.correct}</span>
+                </div>
+                <div class="q-manage-title">${q.subtopic}</div>
+                <div class="q-manage-sub">${q.stem.replace(/\n+/g, " ")}</div>
+              </div>
+              <button
+                class="btn-toggle-q ${isExcluded ? "excluded-state" : "active-state"}"
+                onclick="toggleQuestionExclusion('${q.id}')"
+              >
+                ${isExcluded ? "🚫 Excluída" : "✅ Ativa"}
+              </button>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    /* ==========================================================================
+       FLUXO DO JOGO (INICIAR, RENDERIZAR, RESPONDER, AVANÇAR)
+       ========================================================================== */
+    function switchScreen(screenId) {
+      document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+      document.getElementById(screenId).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function goHome() {
+      stopTimer();
+      updateHomeStats();
+      switchScreen("screenHome");
+    }
+
+    function startQuiz(customDeck = null) {
+      const baseQuestions = customDeck || getActiveQuestions(selectedTopicFilter);
+      if (baseQuestions.length === 0) {
+        showToast("Ative pelo menos uma questão para jogar!");
+        return;
+      }
+
+      const shouldShuffle = document.getElementById("chkShuffleQuestions").checked;
+      const deck = [...baseQuestions];
+      if (shouldShuffle) {
+        for (let i = deck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+      }
+
+      gameState = {
+        deck,
+        currentIndex: 0,
+        score: 0,
+        streak: 0,
+        bestStreak: 0,
+        answered: false,
+        results: [],
+        secondsElapsed: 0,
+        timerInterval: null
+      };
+
+      const useTimer = document.getElementById("chkTimer").checked;
+      const hudTimer = document.getElementById("hudTimer");
+      if (useTimer) {
+        hudTimer.style.display = "inline-flex";
+        hudTimer.textContent = "⏱️ 00:00";
+        startTimer();
+      } else {
+        hudTimer.style.display = "none";
+      }
+
+      switchScreen("screenQuiz");
+      renderCurrentQuestion();
+    }
+
+    function startTimer() {
+      stopTimer();
+      gameState.timerInterval = setInterval(() => {
+        gameState.secondsElapsed++;
+        document.getElementById("hudTimer").textContent = `⏱️ ${formatTime(gameState.secondsElapsed)}`;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (gameState.timerInterval) {
+        clearInterval(gameState.timerInterval);
+        gameState.timerInterval = null;
+      }
+    }
+
+    function formatTime(totalSec) {
+      const mins = String(Math.floor(totalSec / 60)).padStart(2, "0");
+      const secs = String(totalSec % 60).padStart(2, "0");
+      return `${mins}:${secs}`;
+    }
+
+    function renderCurrentQuestion() {
+      const q = gameState.deck[gameState.currentIndex];
+      const total = gameState.deck.length;
+      gameState.answered = false;
+
+      // HUD e Progresso
+      document.getElementById("hudProgress").textContent = `Questão ${gameState.currentIndex + 1} de ${total}`;
+      document.getElementById("hudScore").textContent = `🏆 ${gameState.score} pts`;
+      document.getElementById("progressBar").style.width = `${(gameState.currentIndex / total) * 100}%`;
+
+      const streakBadge = document.getElementById("hudStreak");
+      if (gameState.streak >= 2) {
+        streakBadge.style.display = "inline-flex";
+        streakBadge.textContent = `🔥 ${gameState.streak} seguidas`;
+      } else {
+        streakBadge.style.display = "none";
+      }
+
+      // Metadados da questão
+      document.getElementById("qYearBadge").textContent = `ENADE ${q.year} • ${q.number}`;
+      document.getElementById("qTopicBadge").textContent = q.topic;
+      document.getElementById("qSubtopic").textContent = q.subtopic;
+
+      // Enunciado e Fonte
+      document.getElementById("qStem").textContent = q.stem;
+      const sourceEl = document.getElementById("qSource");
+      if (q.source) {
+        sourceEl.style.display = "block";
+        sourceEl.textContent = q.source;
+      } else {
+        sourceEl.style.display = "none";
+      }
+
+      // Figura SVG (se existir)
+      const figBox = document.getElementById("qFigureContainer");
+      if (q.figureSvg) {
+        figBox.style.display = "block";
+        figBox.innerHTML = `${q.figureSvg}<div class="figure-caption">${q.figureCaption || ""}</div>`;
+      } else {
+        figBox.style.display = "none";
+        figBox.innerHTML = "";
+      }
+
+      // Afirmações (I, II, III...)
+      const stmtBox = document.getElementById("qStatements");
+      if (q.statements && q.statements.length > 0) {
+        stmtBox.style.display = "flex";
+        stmtBox.innerHTML = q.statements
+          .map((st) => {
+            if (st.isConnector) {
+              return `<div class="assertion-connector">${st.text}</div>`;
+            }
+            return `<div class="statement-item"><span class="statement-roman">${st.roman}</span>${st.text}</div>`;
+          })
+          .join("");
+      } else {
+        stmtBox.style.display = "none";
+        stmtBox.innerHTML = "";
+      }
+
+      // Comando da questão
+      document.getElementById("qPrompt").textContent = q.prompt;
+
+      // Alternativas
+      const optionsContainer = document.getElementById("qOptions");
+      optionsContainer.innerHTML = q.options
+        .map(
+          (opt) => `
+          <button class="option-btn" data-letter="${opt.letter}" onclick="handleOptionSelect('${opt.letter}')">
+            <span class="option-letter">${opt.letter}</span>
+            <span>${opt.text}</span>
+          </button>
+        `
+        )
+        .join("");
+
+      // Ocultar feedback e botão Próxima
+      document.getElementById("feedbackBox").style.display = "none";
+      document.getElementById("btnNextQuestion").style.display = "none";
+      document.getElementById("footerTip").style.display = "inline";
+    }
+
+    function handleOptionSelect(chosenLetter) {
+      if (gameState.answered) return;
+      gameState.answered = true;
+
+      const q = gameState.deck[gameState.currentIndex];
+      const isCorrect = chosenLetter === q.correct;
+
+      // Pontuação + Streak
+      if (isCorrect) {
+        gameState.streak++;
+        if (gameState.streak > gameState.bestStreak) {
+          gameState.bestStreak = gameState.streak;
+        }
+        const bonus = (gameState.streak - 1) * 20;
+        gameState.score += 100 + bonus;
+      } else {
+        gameState.streak = 0;
+      }
+
+      gameState.results.push({
+        question: q,
+        chosenLetter,
+        isCorrect
+      });
+
+      // Atualiza HUD
+      document.getElementById("hudScore").textContent = `🏆 ${gameState.score} pts`;
+      const streakBadge = document.getElementById("hudStreak");
+      if (gameState.streak >= 2) {
+        streakBadge.style.display = "inline-flex";
+        streakBadge.textContent = `🔥 ${gameState.streak} seguidas`;
+      } else {
+        streakBadge.style.display = "none";
+      }
+
+      // Destaca alternativas
+      document.querySelectorAll("#qOptions .option-btn").forEach((btn) => {
+        btn.disabled = true;
+        const letter = btn.dataset.letter;
+        if (letter === q.correct) {
+          btn.classList.add("correct");
+        } else if (letter === chosenLetter && !isCorrect) {
+          btn.classList.add("wrong");
+        } else {
+          btn.classList.add("dimmed");
+        }
+      });
+
+      // Exibe Justificativa Técnica Comentada
+      const feedbackBox = document.getElementById("feedbackBox");
+      feedbackBox.className = `feedback-box ${isCorrect ? "is-correct" : "is-wrong"}`;
+      feedbackBox.style.display = "block";
+
+      document.getElementById("feedbackStatus").textContent = isCorrect
+        ? "🎉 Excelente! Você acertou!"
+        : "❌ Ops! Resposta incorreta.";
+      document.getElementById("feedbackGabarito").textContent = `Gabarito Oficial: Alternativa ${q.correct}`;
+      document.getElementById("feedbackJustification").innerHTML = `<strong>Justificativa Técnica:</strong> ${q.justification}`;
+
+      // Botão Próxima / Ver Resultado
+      document.getElementById("footerTip").style.display = "none";
+      const nextBtn = document.getElementById("btnNextQuestion");
+      nextBtn.style.display = "inline-flex";
+      const isLast = gameState.currentIndex === gameState.deck.length - 1;
+      nextBtn.textContent = isLast ? "🏁 Ver Resultado Final" : "Próxima Questão →";
+    }
+
+    function nextQuestion() {
+      if (gameState.currentIndex < gameState.deck.length - 1) {
+        gameState.currentIndex++;
+        renderCurrentQuestion();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function excludeCurrentInGame() {
+      const q = gameState.deck[gameState.currentIndex];
+      excludedIds.add(q.id);
+      saveExcludedState();
+      renderManagerList();
+      showToast(`Questão ENADE ${q.year} (${q.number}) excluída das próximas partidas.`);
+
+      // Se ainda não respondeu, remove do deck atual e avança
+      if (!gameState.answered) {
+        gameState.deck.splice(gameState.currentIndex, 1);
+        if (gameState.deck.length === 0) {
+          showToast("Todas as questões da partida foram excluídas.");
+          goHome();
+          return;
+        }
+        if (gameState.currentIndex >= gameState.deck.length) {
+          finishQuiz();
+        } else {
+          renderCurrentQuestion();
+        }
+      }
+    }
+
+    /* ==========================================================================
+       TELA DE RESULTADOS FINAIS
+       ========================================================================== */
+    function finishQuiz() {
+      stopTimer();
+      document.getElementById("progressBar").style.width = "100%";
+
+      const total = gameState.results.length;
+      const hits = gameState.results.filter((r) => r.isCorrect).length;
+      const misses = total - hits;
+      const percent = total > 0 ? Math.round((hits / total) * 100) : 0;
+
+      // Salva recorde se superou
+      if (gameState.score > bestRecord.score || (gameState.score === bestRecord.score && percent > bestRecord.accuracy)) {
+        bestRecord = { score: gameState.score, accuracy: percent };
+        try {
+          localStorage.setItem(STORAGE_KEY_BEST, JSON.stringify(bestRecord));
+        } catch (e) {}
+      }
+
+      document.getElementById("resPercent").textContent = `${percent}%`;
+      document.getElementById("resSubtitle").textContent = `Você acertou ${hits} de ${total} ${
+        total === 1 ? "questão respondida" : "questões respondidas"
+      }.`;
+      document.getElementById("resScore").textContent = `${gameState.score} pts`;
+      document.getElementById("resHitsMisses").textContent = `${hits} acertos / ${misses} erros`;
+      document.getElementById("resTime").textContent = `Tempo total: ${formatTime(gameState.secondsElapsed)}`;
+      document.getElementById("resBestStreak").textContent = `${gameState.bestStreak} seguidas`;
+
+      let titleMsg = "Bom esforço! Continue revisando.";
+      if (percent === 100) titleMsg = "🏆 Gabaritou! Desempenho impecável!";
+      else if (percent >= 80) titleMsg = "🌟 Excelente desempenho no ENADE!";
+      else if (percent >= 60) titleMsg = "👍 Bom resultado! Você está no caminho certo.";
+      document.getElementById("resTitle").textContent = titleMsg;
+
+      // Desempenho por tema
+      const topics = [
+        "Processos de Software",
+        "Qualidade de Software",
+        "Verificação e Validação de Software"
+      ];
+      const breakdownEl = document.getElementById("resTopicBreakdown");
+      breakdownEl.innerHTML = topics
+        .map((t) => {
+          const items = gameState.results.filter((r) => r.question.topic === t);
+          if (items.length === 0) return "";
+          const tHits = items.filter((r) => r.isCorrect).length;
+          const tPct = Math.round((tHits / items.length) * 100);
+          return `
+            <div class="topic-bar-card">
+              <div class="topic-bar-top">
+                <span>${t}</span>
+                <span>${tHits}/${items.length} (${tPct}%)</span>
+              </div>
+              <div class="topic-bar-track">
+                <div class="topic-bar-fill" style="width:${tPct}%;"></div>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+
+      // Revisão das questões erradas
+      const wrongResults = gameState.results.filter((r) => !r.isCorrect);
+      const retryBtn = document.getElementById("btnRetryWrong");
+      const reviewSection = document.getElementById("wrongReviewSection");
+
+      if (wrongResults.length > 0) {
+        retryBtn.style.display = "inline-flex";
+        document.getElementById("wrongCountSpan").textContent = wrongResults.length;
+        reviewSection.style.display = "block";
+
+        document.getElementById("wrongReviewList").innerHTML = wrongResults
+          .map((r) => {
+            const q = r.question;
+            return `
+              <div class="review-item">
+                <div class="review-item-head">
+                  <span>ENADE ${q.year} • ${q.number} — ${q.subtopic}</span>
+                  <span>Sua resposta: <strong style="color:var(--danger);">${r.chosenLetter}</strong> | Correta: <strong style="color:var(--success);">${q.correct}</strong></span>
+                </div>
+                <p><strong>Justificativa:</strong> ${q.justification}</p>
+              </div>
+            `;
+          })
+          .join("");
+      } else {
+        retryBtn.style.display = "none";
+        reviewSection.style.display = "none";
+      }
+
+      switchScreen("screenResult");
+    }
+
+    function retryWrongQuestions() {
+      const wrongQuestions = gameState.results.filter((r) => !r.isCorrect).map((r) => r.question);
+      if (wrongQuestions.length > 0) {
+        startQuiz(wrongQuestions);
+      }
+    }
+
+    /* ==========================================================================
+       UTILITÁRIOS
+       ========================================================================== */
+    let toastTimeout = null;
+    function showToast(msg) {
+      const toast = document.getElementById("toastMsg");
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2600);
+    }
+
+    // Inicia o aplicativo
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
